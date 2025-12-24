@@ -60,7 +60,7 @@ sudo pacman -S flatpak-builder
 
 ### Add flathub repository
 ```
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
 
 ### Build and install container
