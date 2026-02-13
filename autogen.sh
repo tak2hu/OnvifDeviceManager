@@ -865,33 +865,31 @@ setupPythonVirtualEnv(){
     VENV_EXEC="virtualenv"
   fi
 
-  local VENV_DIR="./venvfolder"
-  local VENV_ACTIVATE="$VENV_DIR/bin/activate"
-  if [ -f "$VENV_DIR/local/bin/activate" ]; then
-    VENV_ACTIVATE="$VENV_DIR/local/bin/activate"
-  fi
-
-  #Setting up Virtual Python environment
-  if [ ! -f "$VENV_ACTIVATE" ]; then
-    $VENV_EXEC "$VENV_DIR" 2>&1 | printlines project="virtualenv" task="setup"
+  # Setting up Virtual Python environment
+  if [ ! -f "./venvfolder/bin/activate" ] && [ ! -f "./venvfolder/local/bin/activate" ]; then
+    $VENV_EXEC ./venvfolder 2>&1 | printlines project="virtualenv" task="setup"
     if [ "${PIPESTATUS[0]}" -ne 0 ]; then
       printError project="virtualenv" task="setup" msg="failed to run python3 virtualenv.pyz"
       exit 1;
-    fi
-    VENV_ACTIVATE="$VENV_DIR/bin/activate"
-    if [ -f "$VENV_DIR/local/bin/activate" ]; then
-      VENV_ACTIVATE="$VENV_DIR/local/bin/activate"
     fi
   else
     printlines project="virtualenv" task="check" msg="found"
   fi
 
-  #Activate virtual environment
-  if [[ ! -f "$VENV_ACTIVATE" ]]; then
+  # Activate virtual environment
+  ACTIVATE=""
+
+  if [ -f "./venvfolder/bin/activate" ]; then
+    ACTIVATE="./venvfolder/bin/activate"
+  elif [ -f "./venvfolder/local/bin/activate" ]; then
+    ACTIVATE="./venvfolder/local/bin/activate"
+  fi
+
+  if [ -z "$ACTIVATE" ]; then
     printError project="virtualenv" task="activate" msg="failed to activate python virtual environment."
     exit 1;
   else
-    source "$VENV_ACTIVATE"
+    source "$ACTIVATE"
     printlines project="virtualenv" task="activate" msg="activated python virtual environment."
   fi
 
